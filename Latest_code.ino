@@ -55,10 +55,10 @@ void setup() {
 void loop() 
 {
   if(LX > 0)                                                  // Left stick  (-127, 128)
-    right.writeMicroseconds(n_min + (LX * RATE));             // 127*3,5~445 
+    right.writeMicroseconds(n_min + LX * RATE);             // 127*3,5~445 
   
   if(LX > 0)                                                  // Left stick  (-127, 128) 
-    left.writeMicroseconds(n_min - (LX * (RATE )));          // -127*(-3,5)~445 
+    left.writeMicroseconds(n_min - LX * RATE );          // -127*(-3,5)~445 
   
   if(LX == 0)                                                  // Left stick  (-127, 128)
     left.writeMicroseconds(n_min);
@@ -68,7 +68,7 @@ void loop()
 
   if (BTN == 512)  // Button state (0-65k)
   {
-     while (m_max > speed > m_min)
+     while ( (m_max > speed) && (sped > m_min) )
           {
            motor.writeMicroseconds(speed - 20);
            delay(50);
@@ -88,14 +88,14 @@ void loop()
              }
   
   if (LT > 0)   // Left Trigger (0, 255)
-         while (m_max > speed > m_min)
+         while ((m_max > speed ) && ( speed > m_min ))
               {
                motor.writeMicroseconds(speed + (LT/14));
                delay(50);
               } 
     
    if(RT == 0)   // Right Trigger (0, 255) 
-         while (m_max > speed > m_min)
+         while ((m_max > speed ) && ( speed > m_min ))
               {
                motor.writeMicroseconds(speed + (LT/33));
                delay(1);
