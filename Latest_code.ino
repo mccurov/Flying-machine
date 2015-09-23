@@ -14,15 +14,17 @@ int LT = 0;   // Left Trigger (0, 255)
 int RT = 0;   // Right Trigger (0, 255) 
 //float RATE = 3.5; // Коэффицитент умножения
 #define RATE 35/10
+#define speed motor.readMicroseconds()
+#define rLeft left.readMicroseconds()
+#define rRight right.readMicroseconds()
+#define rTop top.readMicroseconds()
 // исключительный случай, когда
 // define-константу не надо заносить в скобки
 int button32 = 0;
 int n_min = 1580; //Мин угол поворота в мсек              nozzle_min
-int n_max = 2000; //Мах угол поворота в мсек              nozzle_max
+int n_max = 2200; //Мах угол поворота в мсек              nozzle_max
 int m_min = 1051; //Мин разгон                            motor_min
 int m_max = 2000; //Мах разгон                            motor_max
-int m_stop = 1050; //Stop                                 motor_stop
-
 
 
 Servo left;
@@ -30,7 +32,7 @@ Servo top;
 Servo right;
 Servo motor;
 
-int speed = motor.readMicroseconds();
+
 
                                                                                                         /* Function declaration*/
 
@@ -57,21 +59,14 @@ void loop()
   if(LX > 0)                                                  // Left stick  (-127, 128)
     right.writeMicroseconds(n_min + LX * RATE);             // 127*3,5~445 
   
-  if(LX > 0)                                                  // Left stick  (-127, 128) 
-    left.writeMicroseconds(n_min - LX * RATE );          // -127*(-3,5)~445 
-  
-  if(LX == 0)                                                  // Left stick  (-127, 128)
-    left.writeMicroseconds(n_min);
-    right.writeMicroseconds(n_min); 
-  delay(1);
-
+  if(LX < 0)                                                  // Left stick  (-127, 128) 
+    left.writeMicroseconds(n_min - LX * RATE);            // -127*(-3,5)~445 
 
   if (BTN == 512)  // Button state (0-65k)
   {
-     while ( (m_max > speed) && (sped > m_min) )
+     if( (m_max > speed) && (speed > m_min) )
           {
            motor.writeMicroseconds(speed - 20);
-           delay(50);
           }
    }
   else
@@ -81,28 +76,26 @@ void loop()
     
   
   if (RT > 0)   // Right Trigger (0, 255) 
-       while ( (m_max > speed ) && ( speed > m_min ))
+       if ( (m_max > speed ) && ( speed > m_min ))
              {
-              motor.writeMicroseconds(speed + (RT/20));
-              delay(50);
+              motor.writeMicroseconds(speed + RT*RATE);
              }
   
   if (LT > 0)   // Left Trigger (0, 255)
-         while ((m_max > speed ) && ( speed > m_min ))
+         if ((m_max > speed ) && ( speed > m_min ))
               {
-               motor.writeMicroseconds(speed + (LT/14));
-               delay(50);
+               motor.writeMicroseconds(speed + (LT*(-RATE)));
               } 
     
    if(RT == 0)   // Right Trigger (0, 255) 
-         while ((m_max > speed ) && ( speed > m_min ))
+         if ((m_max > speed ) && ( speed > m_min ))
               {
                motor.writeMicroseconds(speed + (LT/33));
-               delay(1);
               }
    
-   if(LT == 0)   // Left Trigger (0, 255)
-   delay(1);
+   if(LT == 0)
+		delay(1);// Left Trigger (0, 255)
+delay(50);   
 }   
                                                                                                                /*Serial event*/
 void serialEvent() 
@@ -128,6 +121,10 @@ void serialEvent()
       Serial.print(RT,DEC);
       Serial.print(" speed=");
       Serial.print(speed,DEC);
+      Serial.print(" rLeft=");
+      Serial.print(rLeft,DEC);
+      Serial.print(" rRight=");
+      Serial.print(rRight,DEC);
       Serial.print("\n");    
       return;
     }
@@ -146,21 +143,6 @@ void parseBuffer()
   }
   else
   {
-  /*
-    int 
-    i = buf.indexOf(' ');
-    LX = buf.substring(0,i).toInt();
-    buf.remove(0,i+1);
-    i = buf.indexOf(' ');
-    BTN = buf.substring(0,i).toInt();
-    buf.remove(0,i+1);
-    i = buf.indexOf(' ');
-    LT = buf.substring(0,i).toInt();
-    buf.remove(0,i+1);
-    i = buf.indexOf('\n');
-    RT = buf.substring(0,i).toInt();
-    buf.remove(0,buf.length());
-  */
     sscanf(buf.c_str(),
            "%i %i %i %i",
            &LX, &BTN, &LT, &RT);
