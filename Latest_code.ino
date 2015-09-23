@@ -1,6 +1,6 @@
 
                                                                                                                  /* Includes */
-#include "String.h"
+#include <String.h>
 #include <Math.h>
 #include <Servo.h> 
 
@@ -31,7 +31,7 @@ int speed = motor.readMicroseconds();
 
                                                                                                         /* Function declaration*/
 
-void parseBuffer(String str);
+//void parseBuffer(String &str);
 
                                                                                                                       /* Setup*/
 void setup() {
@@ -143,6 +143,7 @@ void parseBuffer()
   }
   else
   {
+  /*
     int 
     i = buf.indexOf(' ');
     LX = buf.substring(0,i).toInt();
@@ -156,5 +157,10 @@ void parseBuffer()
     i = buf.indexOf('\n');
     RT = buf.substring(0,i).toInt();
     buf.remove(0,buf.length());
+  */
+    sscanf(buf.c_str(),
+           "%i %i %i %i",
+           &LX, &BTN, &LT, &RT);
+    buf.clear();
   }
 }
