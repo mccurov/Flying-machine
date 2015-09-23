@@ -64,15 +64,13 @@ void loop()
 
   if (BTN == 512)  // Button state (0-65k)
   {
-     if( (m_max > speed) && (speed > m_min) )
+     if( (speed > m_min) )
           {
-           motor.writeMicroseconds(speed - 20);
+           motor.writeMicroseconds(speed - 20>m_min?speed - 20:m_min);
           }
    }
   else
     {
-    motor.writeMicroseconds(m_min);
-    }
     
   
   if (RT > 0)   // Right Trigger (0, 255) 
@@ -84,7 +82,7 @@ void loop()
   if (LT > 0)   // Left Trigger (0, 255)
          if ((m_max > speed ) && ( speed > m_min ))
               {
-               motor.writeMicroseconds(speed + (LT*(-RATE)));
+               motor.writeMicroseconds(speed - LT*-RATE);
               } 
     
    if(RT == 0)   // Right Trigger (0, 255) 
@@ -92,9 +90,10 @@ void loop()
               {
                motor.writeMicroseconds(speed + (LT/33));
               }
+   }
    
    if(LT == 0)
-		delay(1);// Left Trigger (0, 255)
+		;//delay(1);// Left Trigger (0, 255)
 delay(50);   
 }   
                                                                                                                /*Serial event*/
