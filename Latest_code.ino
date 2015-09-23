@@ -12,7 +12,10 @@ int LX = 0;   // Left stick  (-127, 128)
 int BTN = 0;  // Button state (0-65k), interesting 32 and 512
 int LT = 0;   // Left Trigger (0, 255)
 int RT = 0;   // Right Trigger (0, 255) 
-float RATE = 3.5; // Коэффицитент умножения
+//float RATE = 3.5; // Коэффицитент умножения
+#define RATE 35/10
+// исключительный случай, когда
+// define-константу не надо заносить в скобки
 int button32 = 0;
 int n_min = 1580; //Мин угол поворота в мсек              nozzle_min
 int n_max = 2000; //Мах угол поворота в мсек              nozzle_max
@@ -55,7 +58,7 @@ void loop()
     right.writeMicroseconds(n_min + (LX * RATE));             // 127*3,5~445 
   
   if(LX > 0)                                                  // Left stick  (-127, 128) 
-    left.writeMicroseconds(n_min + (LX * (-RATE )));          // -127*(-3,5)~445 
+    left.writeMicroseconds(n_min - (LX * (RATE )));          // -127*(-3,5)~445 
   
   if(LX == 0)                                                  // Left stick  (-127, 128)
     left.writeMicroseconds(n_min);
@@ -78,25 +81,25 @@ void loop()
     
   
   if (RT > 0)   // Right Trigger (0, 255) 
-       while (m_max > speed > m_min)
+       while ( (m_max > speed ) && ( speed > m_min ))
              {
-              motor.writeMicroseconds(speed + (RT * 0, 05));
+              motor.writeMicroseconds(speed + (RT/20));
+              delay(50);
              }
-   delay(50);
   
   if (LT > 0)   // Left Trigger (0, 255)
          while (m_max > speed > m_min)
               {
-               motor.writeMicroseconds(speed - (LT*(-0,07)));
-              }
-   delay(50);   
+               motor.writeMicroseconds(speed + (LT/14));
+               delay(50);
+              } 
     
    if(RT == 0)   // Right Trigger (0, 255) 
          while (m_max > speed > m_min)
               {
-               motor.writeMicroseconds(speed - (LT*(-0, 03)));
-               }
-   delay(1);
+               motor.writeMicroseconds(speed + (LT/33));
+               delay(1);
+              }
    
    if(LT == 0)   // Left Trigger (0, 255)
    delay(1);
@@ -161,6 +164,6 @@ void parseBuffer()
     sscanf(buf.c_str(),
            "%i %i %i %i",
            &LX, &BTN, &LT, &RT);
-    buf.clear();
+    buf = "";
   }
 }
