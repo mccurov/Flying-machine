@@ -5,7 +5,6 @@
 #include <Servo.h>
 
 //закомментировать, когда будешь собирать боевой вариант
-#define DEBUG
 
 			/* Variables */
 String buf = "";     // a string to hold incoming data
@@ -91,7 +90,6 @@ void serialEvent(){
 			parseBuffer();  // Parse received data
 			delay(1);      // Small delay for synchronization
 			// Sendback the data
-			#ifdef DEBUG
 			Serial.print("LX=");
 			Serial.print(LX,DEC);
 			Serial.print(" BTN=");
@@ -107,7 +105,6 @@ void serialEvent(){
 			Serial.print(" rRight=");
 			Serial.print(R_RIGHT,DEC);
 			Serial.print("\n");
-			#endif
 			return;
 		}
 	}
@@ -115,11 +112,8 @@ void serialEvent(){
 			/*Buffer parse*/
 void parseBuffer(){
 	if(buf.length()<5){
-		LX=0;
-		BTN=0;
-		LT=0;
-		RT=0;
-		buf.remove(0,buf.length()); // clear buffer
+		LX=BTN=LT=RT=0;
+		buf= ""; // clear buffer
 	}
 	else{
 		sscanf(	buf.c_str(),
