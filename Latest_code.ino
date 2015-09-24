@@ -58,19 +58,19 @@ void loop(){
 	if(LX < 0)						// Left stick  (-127, 128) 
 		left.writeMicroseconds(N_MIN - LX * RATE);	// -127*(-3,5)~445 
 
-	if (BTN & 0x200){					// Button state (0-65k)
-	//это можно расшифровать как "если кнопка № 9 нажата", при этом могут быть нажаты и другие
+	if (BTN & 0x0200){					// Button state (0-65k)
+	//это можно расшифровать как "если кнопка RB нажата", при этом могут быть нажаты и другие
 		if( (SPEED > M_MIN) ){
 			motor.writeMicroseconds((SPEED-20>M_MIN)?(SPEED-20):M_MIN);
 		}
 	}
 	else{
 		if ( (RT > 0) && (M_MAX > SPEED ) ){
-			motor.writeMicroseconds((SPEED+RT*RATE<M_MAX)?(SPEED+RT*RATE<M_MAX):M_MAX);
+			motor.writeMicroseconds(SPEED+(RT*RATE));
 		}
 
 		if ( (LT > 0) && ( SPEED > M_MIN ) )	{
-			motor.writeMicroseconds((SPEED-RT*RATE>M_MIN)?(SPEED-RT*RATE):M_MIN);
+			motor.writeMicroseconds((SPEED-LT*0.05>M_MIN)?(SPEED-LT*0.05):M_MIN);
 		} 
 
 		if ( (RT == 0) && (LT == 0) && (SPEED > M_MIN) ){
