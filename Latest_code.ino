@@ -26,6 +26,7 @@ int RT = 0;   // Right Trigger (0, 255)
 
 #define M_MIN	1051	/*Мин разгон                            motor_min*/
 #define M_MAX	2000	/*Мах разгон                            motor_max*/
+#define ANGLE	6	/*Коэффициент поворота                           motor_max*/
 
 
 Servo left;
@@ -36,9 +37,9 @@ Servo motor;
 
 												/* Setup*/
 void setup() {
-	left.attach(11);			// Left Nozzle
-	top.attach(10);				// Top Nozzle 
-	right.attach(9);			// Right Nozzle
+	left.attach(11, N_MIN, N_MAX);			// Left Nozzle
+	top.attach(10, N_MIN, N_MAX);				// Top Nozzle 
+	right.attach(9, N_MIN, N_MAX);			// Right Nozzle
 	motor.attach(6);			// Motor 
 	buf.reserve(50);			// Reserve 50 chars (тебе за глаза хватит)
 	Serial.begin(115200);			// Initialize UART at 115200 bod
@@ -48,12 +49,12 @@ void setup() {
 			/*Logic code */
 void loop(){
 	if(LX > 0){						// Left stick  (-127, 128)
-		right.writeMicroseconds(N_MIN + LX * 5);	// 127*3,5~445 
+		right.writeMicroseconds(N_MIN + LX * ANGLE);	// 127*3,5~445 
                 left.writeMicroseconds(N_MIN);
         }
 
 	if(LX < 0){						// Left stick  (-127, 128) 
-		left.writeMicroseconds(N_MIN - LX * 5);	// -127*(-3,5)~445 
+		left.writeMicroseconds(N_MIN - LX * ANGLE);	// -127*(-3,5)~445 
                 right.writeMicroseconds(N_MIN);
         }
 
