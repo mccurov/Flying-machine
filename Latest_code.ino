@@ -22,9 +22,10 @@ int RT = 0;   // Right Trigger (0, 255)
 #define	R_TOP	top.readMicroseconds()
 // исключительный случай, когда
 // define-константу не надо заносить в скобки
-int button32 = 0;
+
 #define	N_MIN	1580	/*Мин угол поворота в мсек              nozzle_min*/
 #define	N_MAX	2200	/*Мах угол поворота в мсек              nozzle_max*/
+
 #define M_MIN	1051	/*Мин разгон                            motor_min*/
 #define M_MAX	2000	/*Мах разгон                            motor_max*/
 
@@ -41,9 +42,9 @@ void setup() {
 	top.attach(10);				// Top Nozzle 
 	right.attach(9);			// Right Nozzle
 	motor.attach(6);			// Motor
-	left.writeMicroseconds(1700);		// Installing standart angles
-	top.writeMicroseconds(1700);
-	right.writeMicroseconds(1700);
+	left.writeMicroseconds(1580);		// Installing standart angles
+	top.writeMicroseconds(1580);
+	right.writeMicroseconds(1580);
 	motor.writeMicroseconds(1051);  
 	buf.reserve(50);			// Reserve 50 chars (тебе за глаза хватит)
 	Serial.begin(115200);			// Initialize UART at 115200 bod
@@ -53,22 +54,20 @@ void setup() {
 			/*Logic code */
 void loop(){
 	if(LX > 0)						// Left stick  (-127, 128)
-		right.writeMicroseconds(N_MIN + LX * RATE);	// 127*3,5~445 
+		right.writeMicroseconds(N_MIN + LX * 5);	// 127*3,5~445 
                 left.writeMicroseconds(N_MIN);
 
 	if(LX < 0)						// Left stick  (-127, 128) 
-		left.writeMicroseconds(N_MIN + (LX * RATE*(-1)));	// -127*(-3,5)~445 
+		left.writeMicroseconds(N_MIN - LX * 5);	// -127*(-3,5)~445 
                 right.writeMicroseconds(N_MIN);
 
-	if (BTN & 0x0200){					// Button state (0-65k)
-	//это можно расшифровать как "если кнопка RB нажата", при этом могут быть нажаты и другие
+	if (BTN & 0x0200){					// Button state (0-65k) 	Кнопка RB нажата
 		if( (SPEED > M_MIN) ){
 			motor.writeMicroseconds((SPEED-20>M_MIN)?(SPEED-20):M_MIN);
 		}
 	}
 
-	if (BTN & 0x0010){					// Button state (0-65k)
-	//это можно расшифровать как "если кнопка RB нажата", при этом могут быть нажаты и другие
+	if (BTN & 0x0010){					// Button state (0-65k) 	Кнопка Start нажата
 			motor.writeMicroseconds(800);
 	}
 
