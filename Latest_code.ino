@@ -44,7 +44,7 @@ void setup() {
 	left.writeMicroseconds(1700);		// Installing standart angles
 	top.writeMicroseconds(1700);
 	right.writeMicroseconds(1700);
-	motor.writeMicroseconds(800);  
+	motor.writeMicroseconds(1051);  
 	buf.reserve(50);			// Reserve 50 chars (тебе за глаза хватит)
 	Serial.begin(115200);			// Initialize UART at 115200 bod
 }
@@ -54,9 +54,11 @@ void setup() {
 void loop(){
 	if(LX > 0)						// Left stick  (-127, 128)
 		right.writeMicroseconds(N_MIN + LX * RATE);	// 127*3,5~445 
+                left.writeMicroseconds(N_MIN);
 
 	if(LX < 0)						// Left stick  (-127, 128) 
-		left.writeMicroseconds(N_MIN - LX * RATE);	// -127*(-3,5)~445 
+		left.writeMicroseconds(N_MIN + (LX * RATE*(-1)));	// -127*(-3,5)~445 
+                right.writeMicroseconds(N_MIN);
 
 	if (BTN & 0x0200){					// Button state (0-65k)
 	//это можно расшифровать как "если кнопка RB нажата", при этом могут быть нажаты и другие
@@ -64,9 +66,16 @@ void loop(){
 			motor.writeMicroseconds((SPEED-20>M_MIN)?(SPEED-20):M_MIN);
 		}
 	}
+
+	if (BTN & 0x0010){					// Button state (0-65k)
+	//это можно расшифровать как "если кнопка RB нажата", при этом могут быть нажаты и другие
+			motor.writeMicroseconds(800);
+	}
+
+
 	else{
 		if ( (RT > 0) && (M_MAX > SPEED ) ){
-			motor.writeMicroseconds(SPEED+(RT*RATE));
+			motor.writeMicroseconds(SPEED+(RT*0.05));
 		}
 
 		if ( (LT > 0) && ( SPEED > M_MIN ) )	{
@@ -100,9 +109,9 @@ void serialEvent(){
 			Serial.print(RT,DEC);
 			Serial.print(" speed=");
 			Serial.print(SPEED,DEC);
-			Serial.print(" rLeft=");
+			Serial.print(" Left=");
 			Serial.print(R_LEFT,DEC);
-			Serial.print(" rRight=");
+			Serial.print(" Right=");
 			Serial.print(R_RIGHT,DEC);
 			Serial.print("\n");
 			return;
