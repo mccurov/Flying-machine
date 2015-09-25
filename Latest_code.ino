@@ -53,13 +53,15 @@ void setup() {
 
 			/*Logic code */
 void loop(){
-	if(LX > 0)						// Left stick  (-127, 128)
+	if(LX > 0){						// Left stick  (-127, 128)
 		right.writeMicroseconds(N_MIN + LX * 5);	// 127*3,5~445 
                 left.writeMicroseconds(N_MIN);
+        }
 
-	if(LX < 0)						// Left stick  (-127, 128) 
+	if(LX < 0){						// Left stick  (-127, 128) 
 		left.writeMicroseconds(N_MIN - LX * 5);	// -127*(-3,5)~445 
                 right.writeMicroseconds(N_MIN);
+        }
 
 	if (BTN & 0x0200){					// Button state (0-65k) 	Кнопка RB нажата
 		if( (SPEED > M_MIN) ){
