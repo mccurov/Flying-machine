@@ -4,8 +4,6 @@
 #include <Math.h>
 #include <Servo.h>
 
-//закомментировать, когда будешь собирать боевой вариант
-
 			/* Variables */
 String buf = "";     // a string to hold incoming data
 
@@ -14,7 +12,7 @@ int BTN = 0;  // Button state (0-65k), interesting 32 and 512
 int LT = 0;   // Left Trigger (0, 255)
 int RT = 0;   // Right Trigger (0, 255) 
 
-#define RATE 35/10
+#define RATE 1/20
 
 #define	SPEED	motor.readMicroseconds()
 #define	R_LEFT	left.readMicroseconds()
@@ -34,9 +32,9 @@ Servo left;
 Servo top;
 Servo right;
 Servo motor;
-			/* Function declaration*/
+												/* Function declaration*/
 
-			/* Setup*/
+												/* Setup*/
 void setup() {
 	left.attach(11);			// Left Nozzle
 	top.attach(10);				// Top Nozzle 
@@ -76,11 +74,11 @@ void loop(){
 
 	else{
 		if ( (RT > 0) && (M_MAX > SPEED ) ){
-			motor.writeMicroseconds(SPEED+(RT*0.05));
+			motor.writeMicroseconds(SPEED+(RT*RATE));
 		}
 
 		if ( (LT > 0) && ( SPEED > M_MIN ) )	{
-			motor.writeMicroseconds((SPEED-LT*0.05>M_MIN)?(SPEED-LT*0.05):M_MIN);
+			motor.writeMicroseconds((SPEED-LT*RATE>M_MIN)?(SPEED-LT*RATE):M_MIN);
 		} 
 
 		if ( (RT == 0) && (LT == 0) && (SPEED > M_MIN) ){
@@ -89,7 +87,7 @@ void loop(){
 	}
 	delay(50);   
 }   
-			/*Serial event*/
+												/*Serial event*/
 void serialEvent(){
 	while (Serial.available()){
 		char c = (char)Serial.read();  // Read character
@@ -119,7 +117,7 @@ void serialEvent(){
 		}
 	}
 }
-			/*Buffer parse*/
+												/*Buffer parse*/
 void parseBuffer(){
 	if(buf.length()<5){
 		LX=BTN=LT=RT=0;
