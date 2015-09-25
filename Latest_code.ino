@@ -21,7 +21,7 @@ int RT = 0;   // Right Trigger (0, 255)
 // исключительный случай, когда
 // define-константу не надо заносить в скобки
 
-#define	N_MIN	1580	/*Мин угол поворота в мсек              nozzle_min*/
+#define	N_MIN	1400	/*Мин угол поворота в мсек              nozzle_min*/
 #define	N_MAX	2200	/*Мах угол поворота в мсек              nozzle_max*/
 
 #define M_MIN	1051	/*Мин разгон                            motor_min*/
@@ -39,11 +39,7 @@ void setup() {
 	left.attach(11);			// Left Nozzle
 	top.attach(10);				// Top Nozzle 
 	right.attach(9);			// Right Nozzle
-	motor.attach(6);			// Motor
-	left.writeMicroseconds(1580);		// Installing standart angles
-	top.writeMicroseconds(1580);
-	right.writeMicroseconds(1580);
-	motor.writeMicroseconds(1051);  
+	motor.attach(6);			// Motor 
 	buf.reserve(50);			// Reserve 50 chars (тебе за глаза хватит)
 	Serial.begin(115200);			// Initialize UART at 115200 bod
 }
