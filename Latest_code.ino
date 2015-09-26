@@ -26,10 +26,8 @@ int RT = 0;   // Right Trigger (0, 255)
 
 #define M_MIN	1051	/*Мин скорость                          motor_min*/
 #define M_MAX	2000	/*Макс скорость                         motor_max*/
-#define M_STOP	1050	/*Значение стоп                		motor_stop*/
 #define ANGLE	6	/*Коэффициент поворота                  motor_max*/
 #define TECH	800	/*Техническое значение                  motor_max*/
-
 
 
 Servo left;
@@ -44,7 +42,7 @@ void setup() {
 	top.attach(10, N_MIN, N_MAX);			// Top Nozzle 
 	right.attach(9, N_MIN, N_MAX);			// Right Nozzle
 	motor.attach(6);
-        motor.writeMicroseconds(M_MIN);			// Motor 
+        motor.writeMicroseconds(TECH);			// Motor 
 	buf.reserve(50);			        // Reserve 50 chars (тебе за глаза хватит)
 	Serial.begin(115200);			        // Initialize UART at 115200 bod
 }
@@ -53,13 +51,13 @@ void setup() {
 			/*Logic code */
 void loop(){
 	if(LX > 0){						// Left stick  (-127, 128)
-		right.writeMicroseconds(N_MIN + LX * ANGLE);	// 127*3,5~445 
-                left.writeMicroseconds(N_MIN);
+		left.writeMicroseconds(N_MIN + LX * ANGLE);	// 127*3,5~445 
+                right.writeMicroseconds(N_MIN);
         }
 
 	if(LX < 0){						// Left stick  (-127, 128) 
-		left.writeMicroseconds(N_MIN - LX * ANGLE);	// -127*(-3,5)~445 
-                right.writeMicroseconds(N_MIN);
+		right.writeMicroseconds(N_MIN - LX * ANGLE);	// -127*(-3,5)~445 
+                left.writeMicroseconds(N_MIN);
         }
 
 	if (BTN & 0x0200){					// Button state (0-65k) 	Кнопка RB нажата
@@ -69,9 +67,9 @@ void loop(){
 	}
 
 	if (BTN & 0x0010){					// Button state (0-65k) 	Кнопка Start нажата
-			motor.writeMicroseconds(TECH);
-                        motor.writeMicroseconds(M_MIN);        // нажимается только вначале.
-                                            
+			if( (SPEED < M_MIN) ){
+			motor.writeMicroseconds(M_MIN);
+		}
 	}
 
 
@@ -125,7 +123,7 @@ void parseBuffer(){
 	if(buf.length()<5){
 		LX=BTN=LT=RT=0;
 		buf= "";                               // clear buffer
-                motor.writeMicroseconds(M_STOP);        // security, if bad signal - set min value
+                motor.writeMicroseconds(M_MIN);        // security, if bad signal - set min value
 	}
 	else{
 		sscanf(	buf.c_str(),
