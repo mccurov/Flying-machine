@@ -1,4 +1,3 @@
-
 			/* Includes */
 #include <String.h>
 #include <Math.h>
@@ -71,6 +70,13 @@ void loop(){
 			motor.writeMicroseconds(M_MIN);
 		}
 	}
+	
+        if (BTN & 0x0200){					// Button state (0-65k) 	Кнопка Back нажата
+			if( (SPEED >= M_MIN) ){
+			motor.writeMicroseconds(TECH);
+                        delay(1);
+		}
+	}
 
 
 	else{
@@ -132,4 +138,3 @@ void parseBuffer(){
 		buf = "";
 	}
 }
-
